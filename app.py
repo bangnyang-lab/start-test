@@ -2,8 +2,14 @@ import streamlit as st
 import pandas as pd
 
 st.set_page_config(page_title="템 획득 경로 백과사전", layout="centered")
-st.title("템 획득 경로 백과사전")
+st.title("이거 어떻게 얻음?")
 st.write("아이템 이름(전체/일부)을 입력하면 관련 아이템을 보여줍니다.")
+
+# 뒤로가기 버튼
+if st.button("뒤로가기"):
+    search_results = go_back()
+else:
+    search_results = search(query_input) if query_input else None
 
 # CSV 불러오기
 df = pd.read_csv("items.csv", encoding='utf-8-sig')
@@ -31,12 +37,6 @@ def go_back():
 
 # 검색창 입력
 query_input = st.text_input("아이템 이름 입력:")
-
-# 뒤로가기 버튼
-if st.button("뒤로가기"):
-    search_results = go_back()
-else:
-    search_results = search(query_input) if query_input else None
 
 # 자동완성 + 드롭다운 방식
 if query_input:
