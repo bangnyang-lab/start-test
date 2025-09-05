@@ -39,16 +39,19 @@ else:
     search_results = search(query_input) if query_input else None
 
 # 자동완성 + 드롭다운 방식
-if search_results is not None and not search_results.empty:
-    matches = search_results["name"].tolist()
-    selected_item = st.selectbox("검색 결과:", matches)
+if query_input:
+    # 입력값이 포함된 아이템 이름 리스트 만들기 (부분 일치)
+    matches = df[df["name"].str.contains(query_input, case=False, na=False)]["name"].tolist()
     
-    # 선택된 아이템 상세 정보
-    item_data = df[df["name"] == selected_item].iloc[0]
-    st.write(f"**{selected_item} 획득 경로**")
-    for col in df.columns[1:]:
-        value = str(item_data[col]).strip()
-        if value == "✅":
-            st.write(f"- {col}")
-elif query_input:
-    st.warning("검색 결과가 없습니다.")
+    if matches:
+        # 선택 가능 드롭다운
+        selected_item = st.selectbox("연관 검색어:", matches)
+        
+        # 선택된 아이템 정보 표시
+        item_data = df[df["name"] == selected_item].iloc[0]
+        st.write(f"**{selected_item} 획득 경로**")
+        for col in df.columns[1:]:
+            if str(item_data[col]).strip() == "✅":
+                st.write(f"- {col}")
+    else:
+        st.warning("검색 결과가 없습니다.")
